@@ -28,7 +28,7 @@
  </template>
 
 <script>
-import { collection, setDoc, doc } from "firebase/firestore"; 
+import { collection, setDoc, doc, addDoc } from "firebase/firestore"; 
 
 export default {
     name: 'GameForm',
@@ -58,15 +58,28 @@ export default {
     },
     methods: {
         async submit () {
+            let docRef
             console.log('submitted');
             const db = useFirestore()
-            await setDoc(doc(db, "games", this.$route.params.id), {
-                name: this.name,
-                description: this.description,
-                tags: this.tags.split(',')
-                });
-            console.log("Document written with ID: ", this.$route.params.id);  
-            navigateTo('/games/' + this.$route.params.id)
+            if (this.$route.params.id) {
+                console.log('updating');
+                docRef = await setDoc(doc(db, "games", this.$route.params.id ), {
+                    name: this.name,
+                    description: this.description,
+                    tags: this.tags.split(',')
+                    });
+                    navigateTo('/games/' + this.$route.params.id)
+                
+            } else {
+                console.log('adding');
+                docRef = await addDoc(collection(db, "games"), {
+                    name: this.name,
+                    description: this.description,
+                    tags: this.tags.split(',')
+                    });
+                    navigateTo('/games/' + docRef.id)
+            }
+            // console.log("Document written with ID: ", this.$route.params.id);  
         }
     }
 }
