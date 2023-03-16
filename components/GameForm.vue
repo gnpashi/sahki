@@ -26,7 +26,6 @@
          </div>
      </form>
  </template>
- 
 
 <script>
 import { collection, setDoc, doc } from "firebase/firestore"; 
